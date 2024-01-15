@@ -1,4 +1,7 @@
-using System.Collections.Generic; // benötigt für Listen
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Windows.Forms;
 
 namespace gdi_PointAndClick
 {
@@ -14,33 +17,39 @@ namespace gdi_PointAndClick
 
         private void FrmMain_Paint(object sender, PaintEventArgs e)
         {
-            // Hilfsvarablen
             Graphics g = e.Graphics;
-            int w = this.ClientSize.Width;
-            int h = this.ClientSize.Height;
 
-            // Zeichenmittel
             Brush b = new SolidBrush(Color.Blue);
 
-            for (int i = 0; i < rectangles.Count; i++)
+            foreach (Rectangle rect in rectangles)
             {
-                g.FillRectangle(b, rectangles[i]);
+                g.FillRectangle(b, rect);
             }
-
         }
 
         private void FrmMain_MouseClick(object sender, MouseEventArgs e)
         {
-            Point mausposition = e.Location;
+            Random random = new Random();
 
-            Rectangle r = new Rectangle(mausposition.X - 20, mausposition.Y - 20, 40, 40);
+            Point mausPosition = e.Location;
 
-            if (!rectangles.Contains(r))
+            Rectangle newRect = new Rectangle(mausPosition.X - 20, mausPosition.Y - 20, random.Next(1, 99), random.Next(1, 99));
+
+            bool overlap = false;
+            foreach (Rectangle existingRect in rectangles)
             {
-                rectangles.Add(r);  // Kurze Variante: rectangles.Add( new Rectangle(...)  );
+                if (existingRect.IntersectsWith(newRect))
+                {
+                    overlap = true;
+                    break;
+                }
             }
 
-            Refresh();
+            if (!overlap)
+            {
+                rectangles.Add(newRect);
+                Refresh();
+            }
         }
 
         private void FrmMain_KeyDown(object sender, KeyEventArgs e)
