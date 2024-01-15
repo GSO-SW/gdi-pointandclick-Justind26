@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Runtime.ConstrainedExecution;
 using System.Windows.Forms;
 
 namespace gdi_PointAndClick
@@ -19,11 +20,28 @@ namespace gdi_PointAndClick
         {
             Graphics g = e.Graphics;
 
-            Brush b = new SolidBrush(Color.Blue);
+            Random rnd = new Random();
+
+            Brush b1 = new SolidBrush(Color.Blue);
+            Brush b2 = new SolidBrush(Color.Red);
+            Brush b3 = new SolidBrush(Color.Green);
+
+            int rndInt = rnd.Next(1, 3);
 
             foreach (Rectangle rect in rectangles)
             {
-                g.FillRectangle(b, rect);
+                if(rndInt == 1)
+                { 
+                    g.FillRectangle(b1, rect);
+                }
+                else if( rndInt == 2)
+                {
+                    g.FillRectangle(b2, rect);
+                }
+                else if( rndInt == 3)
+                {
+                    g.FillRectangle(b3, rect);
+                }
             }
         }
 
@@ -33,21 +51,11 @@ namespace gdi_PointAndClick
 
             Point mausPosition = e.Location;
 
-            Rectangle newRect = new Rectangle(mausPosition.X - 20, mausPosition.Y - 20, random.Next(1, 99), random.Next(1, 99));
+            Rectangle r = new Rectangle(mausPosition.X - 20, mausPosition.Y - 20, random.Next(1, 99), random.Next(1, 99));
 
-            bool overlap = false;
-            foreach (Rectangle existingRect in rectangles)
+            if (!rectangles.Contains(r))
             {
-                if (existingRect.IntersectsWith(newRect))
-                {
-                    overlap = true;
-                    break;
-                }
-            }
-
-            if (!overlap)
-            {
-                rectangles.Add(newRect);
+                rectangles.Add(r);
                 Refresh();
             }
         }
